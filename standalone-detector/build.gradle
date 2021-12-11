@@ -1,7 +1,7 @@
 plugins {
     id 'java'
 }
-apply plugin: 'application'
+
 sourceCompatibility = 11
 targetCompatibility = 11
 group 'itzbenz'
@@ -13,7 +13,6 @@ repositories {
 
 dependencies {
     implementation 'com.unboundid:unboundid-ldapsdk:6.0.3'
-    implementation(project(":payload"))
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 }
@@ -28,7 +27,7 @@ jar {
         //Runtime library only, compile library like arc won't get included
     }
     manifest.attributes(
-            'Main-Class': 'itzbenz.Main'
+            'Main-Class': 'itzbenz.MainDetector'
     )
 }
 tasks.withType(org.gradle.jvm.tasks.Jar) {
