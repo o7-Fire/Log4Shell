@@ -45,6 +45,12 @@ Both sender and receiver are logged which mean they are vulnerable
 - Vulnerable:
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919174049861619752/unknown.png)
 
+## Conclusion
+
+- if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really
+  ![](https://cdn.discordapp.com/attachments/918290369639227434/919240541810610206/unknown.png)
+
 # Disclaimer
 
-This project can only be used for educational purposes. Using this software against target systems without prior permission is illegal, and any damages from misuse of this software will not be the responsibility of the author.
+This project can only be used for educational purposes. Using this software against target systems without prior
+permission is illegal, and any damages from misuse of this software will not be the responsibility of the author.

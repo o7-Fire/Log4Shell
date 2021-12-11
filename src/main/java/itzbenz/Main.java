@@ -48,11 +48,12 @@ public class Main {
     }
 
     public static byte[] getPayload(String payload) {
+        payload = payload.endsWith(".class") ? payload.substring(0, payload.length() - 6) : payload;
         payload = payload.replace('.', '/');
         payload = payload.endsWith(".class") ? payload : payload + ".class";
+        payload = payload.startsWith("/") ? payload : '/' + payload;
         try {
-            return Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(payload))
-                    .readAllBytes();
+            return Objects.requireNonNull(Main.class.getResourceAsStream(payload)).readAllBytes();
         } catch (Exception e) {
             if (payload.equals(defaultPayload)) {
                 throw new RuntimeException("Could not find default payload: " + payload);//really
