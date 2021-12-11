@@ -20,7 +20,7 @@ execute any malicious code or do some little trolling.
 ### [MainDetector.java](standalone-detector/src/main/java/itzbenz/MainDetector.java)
 
 Use simple socket to listen on port 1389 then close the socket once its connected no external dependency
-
+- Note: not always the case, sometimes it doesn't bother to load class url location given by LDAP Server
 - Vulnerable:\
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919166884425900082/unknown.png)
 
@@ -33,6 +33,7 @@ going to throw error if its is vulnerable
 
 Use `com.unboundid:unboundid-ldapsdk` library to host LDAP server
 
+- Note: not always the case if using `javaNamingReference`
 - Vulnerable:
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919168285709312000/unknown.png)
 - LADP Server:
@@ -42,10 +43,13 @@ Use `com.unboundid:unboundid-ldapsdk` library to host LDAP server
 
 Both sender and receiver are logged which mean they are vulnerable
 
+- Note: not always the case
 - Vulnerable:
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919174049861619752/unknown.png)
 
 ## Conclusion
+
+- to test if its actually vulnerable, try to use harmless payloads if its running then its vulnerable
 
 - if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really
   ![](https://cdn.discordapp.com/attachments/918290369639227434/919240541810610206/unknown.png)
