@@ -15,18 +15,19 @@ take this with grain of salt, I'm not a security expert.
 
 ### Unpatched
 
-- Note: 1.16.5 Minecraft Server
+- Note: 1.16.5 Minecraft Server RCE exploit
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919170755843989534/unknown.png)
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919172251771895878/unknown.png)
 
 ### [MainDetector.java](standalone-detector/src/main/java/itzbenz/MainDetector.java)
 
 Use simple socket to listen on port 1389 then close the socket once its connected no external dependency
+
 - Note: not always the case, sometimes it doesn't bother to load class url location given by LDAP Server
-- Vulnerable:\
+- Vulnerable to lookup:\
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919166884425900082/unknown.png)
 
-- Console:\
+- Log:\
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919166938654072852/unknown.png)
 
 going to throw error if its is vulnerable
@@ -35,29 +36,29 @@ going to throw error if its is vulnerable
 
 Use `com.unboundid:unboundid-ldapsdk` library to host LDAP server
 
-- Note: not always the case if using `javaNamingReference`
-- Vulnerable:
+- Note: doesn't mean it's vulnerable to RCE exploit.
+- Vulnerable to lookup:
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919168285709312000/unknown.png)
-- LADP Server:
+- LADP Server logs:
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919171844836311050/unknown.png)
 
 ### DNS Log
 
 Both sender and receiver are logged which mean they are vulnerable
 
-- Note: not always the case
-- Vulnerable:
+- Note: if it's get logged, doesn't mean it's vulnerable to RCE
+- Vulnerable to lookup:
   ![](https://cdn.discordapp.com/attachments/840041811384860707/919174049861619752/unknown.png)
 
 ## Conclusion
 
 - if java do LDAP lookup doesn't mean it is always vulnerable, but if is load the classpath provided then it is ?
-  - vulnerable:
+  - vulnerable to RCE and LDAP lookup:
     ![](https://cdn.discordapp.com/attachments/919142724114972744/919448027058540554/unknown.png)
-  - not vulnerable because java don't fetch bytecode ??
+  - not vulnerable because java don't fetch bytecode ??, still vulnerable to LDAP lookup:
     ![](https://cdn.discordapp.com/attachments/919142724114972744/919448406924083210/unknown.png)
 
-- to test if its actually vulnerable, try to use harmless payloads if its running then its vulnerable.
+- to test if it's actually vulnerable to RCE, try to use harmless payloads if its running then its vulnerable.
 
 - if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really
   ![](https://cdn.discordapp.com/attachments/918290369639227434/919240541810610206/unknown.png)
@@ -72,7 +73,8 @@ Both sender and receiver are logged which mean they are vulnerable
         at java.lang.ClassLoader.loadClass(Unknown Source)
   ```
 
-it's safe because it will not load classpath provided by attacker ??
+it's safe because it will not load classpath provided by attacker ?? though it's still doing LDAP lookup which is large
+attack surface.
 
 note: (after updating java 8, the minecraft server seem not load the classpath)
 

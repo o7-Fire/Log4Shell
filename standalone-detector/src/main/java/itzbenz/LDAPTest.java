@@ -63,6 +63,7 @@ public class LDAPTest {
             t.start();
             return;
         }
+        //this is somehow true in older java update
         //System.setProperty("com.sun.jndi.ldap.object.trustURLCodebase", String.valueOf(true));
         boolean trustURL = Boolean.parseBoolean(System.getProperty("com.sun.jndi.ldap.object.trustURLCodebase"));
         System.out.println("com.sun.jndi.ldap.object.trustURLCodebase: " + trustURL);
