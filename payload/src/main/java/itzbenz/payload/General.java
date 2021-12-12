@@ -51,6 +51,12 @@ public class General {
     public static void init() {
         if (init) return;
         init = true;
+        try {
+            Class.forName("itzbenz.Main");
+            return;
+        } catch (Throwable ignored) {
+
+        }
         log("com.sun.jndi.ldap.object.trustURLCodebase: " +
                 System.getProperty("com.sun.jndi.ldap.object.trustURLCodebase"));
 

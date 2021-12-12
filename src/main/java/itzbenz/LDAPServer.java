@@ -25,7 +25,7 @@ public class LDAPServer extends InMemoryOperationInterceptor {
     public String host = "http://" + Main.address + ":" + Main.port + "/";
 
 
-    public static PayloadVector payloadVector = PayloadVector.JavaNamingReference;
+    public static PayloadVector payloadVector = PayloadVector.JavaSerializationObject;
 
     public static void main(String[] args) throws ClassNotFoundException {
         LDAPTest.main(args);
@@ -36,6 +36,7 @@ public class LDAPServer extends InMemoryOperationInterceptor {
     public void start() throws Exception {
         System.out.println("Payload Vector: " + payloadVector);
         System.out.println("Starting LDAP server on 0.0.0.0:1389");
+        System.out.println("Classpath URL: " + host);
         InMemoryDirectoryServerConfig inMemoryOperationInterceptor = new InMemoryDirectoryServerConfig("dc=example,dc=com");
         inMemoryOperationInterceptor.setListenerConfigs(new InMemoryListenerConfig(
                 "listen",

