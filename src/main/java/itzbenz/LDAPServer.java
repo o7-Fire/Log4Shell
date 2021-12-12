@@ -111,7 +111,20 @@ public class LDAPServer extends InMemoryOperationInterceptor {
         result.setResult(new LDAPResult(0, ResultCode.SUCCESS));//great success
     }
 
-    enum PayloadVector {JavaNamingReference, JavaSerializationString, JavaSerializationObject}
+    enum PayloadVector {
+        JavaNamingReference,//custom class, can be used to execute arbitrary code
+        /**
+         * Send payload as {@link java.lang.String}, should be harmless
+         */
+        JavaSerializationString,
+        /**
+         * If com.sun.jndi.ldap.object.trustURLCodebase is true on target machine
+         * attackers can provide their own classes
+         * else can only use class available on target machine classpath
+         */
+        JavaSerializationObject//custom serializable object can actually execute arbitrary code
+
+    }
 
 
 }

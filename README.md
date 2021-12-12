@@ -60,7 +60,8 @@ Both sender and receiver are logged which mean they are vulnerable
 
 - to test if it's actually vulnerable to RCE, try to use harmless payloads if its running then its vulnerable.
 
-- if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really
+- if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really else, the
+  attacker can use existing classpath
   ![](https://cdn.discordapp.com/attachments/918290369639227434/919240541810610206/unknown.png)
 
 - if you found the victim log and see this:
