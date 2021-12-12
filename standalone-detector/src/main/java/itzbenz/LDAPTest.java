@@ -63,7 +63,7 @@ public class LDAPTest {
             t.start();
             return;
         }
-        System.setProperty("com.sun.jndi.ldap.object.trustURLCodebase", String.valueOf(true));
+        //System.setProperty("com.sun.jndi.ldap.object.trustURLCodebase", String.valueOf(true));
         boolean trustURL = Boolean.parseBoolean(System.getProperty("com.sun.jndi.ldap.object.trustURLCodebase"));
         System.out.println("com.sun.jndi.ldap.object.trustURLCodebase: " + trustURL);
         System.out.println("Using lookup: " + lookup);

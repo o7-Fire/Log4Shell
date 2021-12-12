@@ -49,6 +49,12 @@ Both sender and receiver are logged which mean they are vulnerable
 
 ## Conclusion
 
+- if java do LDAP lookup doesn't mean it is always vulnerable, but if is load the classpath provided then it is ?
+  - vulnerable:
+    ![](https://cdn.discordapp.com/attachments/919142724114972744/919448027058540554/unknown.png)
+  - not vulnerable because java don't fetch bytecode ??
+    ![](https://cdn.discordapp.com/attachments/919142724114972744/919448406924083210/unknown.png)
+
 - to test if its actually vulnerable, try to use harmless payloads if its running then its vulnerable.
 
 - if `com.sun.jndi.ldap.object.trustURLCodebase` property is set to `true` then you are vulnerable like really
