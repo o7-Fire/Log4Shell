@@ -6,25 +6,27 @@ import java.util.Objects;
 
 public class Main {
     public static String address = "localhost";
-    public static int port = 80;
+    public static int remoteHttpPort, httpPort = 8080;
     static String defaultPayload = "itzbenz.payload.RickRoll";
-
+    
     public static void main(String[] args) throws Exception {
-        if (args.length != 0) {
+        if (args.length != 0){
             address = args[0];
         }
-        if (address.split(":").length == 2) {
-            port = Integer.parseInt(address.split(":")[1]);
+        httpPort = Integer.parseInt(System.getProperty("http.port", httpPort + ""));
+        remoteHttpPort = httpPort;
+        if (address.split(":").length == 2){
+            remoteHttpPort = Integer.parseInt(address.split(":")[1]);
         }
-        System.out.println("Using address as payload server: " + address + ":" + port);
+        System.out.println("Using address as payload server: " + address + ":" + remoteHttpPort);
         //payload
         getPayload(defaultPayload);
         System.err.println("Found default payload: " + defaultPayload);
         //webserver
         HttpServer server;
         try {
-            System.out.println("Starting http server on port: " + port);
-            server = HttpServer.create(new java.net.InetSocketAddress("0.0.0.0", 80), 0);
+            System.out.println("Starting http server on port: " + httpPort);
+            server = HttpServer.create(new java.net.InetSocketAddress(httpPort), 0);
             server.createContext("/", new RequestHandler());
         } catch (java.io.IOException e) {
             e.printStackTrace();

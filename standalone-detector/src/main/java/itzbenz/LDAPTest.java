@@ -7,7 +7,7 @@ import javax.naming.NoInitialContextException;
 import javax.naming.directory.InitialDirContext;
 
 public class LDAPTest {
-    static final String defaultLookup = "ldap://localhost:1389/o=reference,payload=itzbenz.payload.Stdout";
+    static final String defaultLookup = "ldap://localhost:10389/o=reference,payload=itzbenz.payload.Stdout";
     static boolean insideThread;
 
     //to test thing if LDAP server working

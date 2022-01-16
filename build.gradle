@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 apply plugin: 'application'
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = targetCompatibility = 11
+
 group 'itzbenz'
 version '1.0'
 
@@ -15,23 +15,18 @@ dependencies {
     implementation 'com.unboundid:unboundid-ldapsdk:6.0.3'
     implementation(project(":payload"))
     implementation(project(":standalone-detector"))
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 }
 
 test {
     useJUnitPlatform()
 }
 jar {
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)//stop including duplicated copy of library, D8 really mad
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-        //Runtime library only, compile library like arc won't get included
+
     }
     manifest.attributes(
             'Main-Class': 'itzbenz.Main'
     )
-}
-tasks.withType(org.gradle.jvm.tasks.Jar) {
-    exclude("META-INF/*.RSA", "META-INF/*.DSA", "META-INF/*.SF")
 }

