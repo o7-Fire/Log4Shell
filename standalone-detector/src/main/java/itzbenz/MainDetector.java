@@ -19,7 +19,7 @@ public class MainDetector {
         }
         System.out.println();
         System.out.println();
-        System.out.println("${jndi:ldap://" + address + ":" + port + "/o=reference}");
+        System.out.println("${jndi:ldap://localhost:1389/o=reference}");
         System.out.println();
         System.out.println();
         System.out.println("Listening on " + address + ":" + port);

@@ -12,4 +12,5 @@ repositories {
 
 dependencies {
     compileOnly 'org.apache.logging.log4j:log4j-core:2.14.0'
+    implementation('org.json:json:20180813')
 }

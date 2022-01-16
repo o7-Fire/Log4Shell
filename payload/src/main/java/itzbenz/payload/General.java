@@ -6,13 +6,10 @@ import org.apache.logging.log4j.LogManager;
 
 public class General {
     static boolean init = false;
-
-    static {
-        init();
-    }
-
-
+    
+    
     public static void log(String str) {
+        //disable this
         System.out.println(str);
         System.err.println(str);
         httpViaClasspath(str);
