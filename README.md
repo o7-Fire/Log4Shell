@@ -6,6 +6,11 @@ execute any malicious code or do some little trolling.
 
 take this with grain of salt, I'm not a security expert.
 
+
+inb4:
+
+https://user-images.githubusercontent.com/49940811/176066056-e96eef48-42f2-47d3-b270-477c2a19b654.mp4
+
 ## Detection
 
 ### Patched
